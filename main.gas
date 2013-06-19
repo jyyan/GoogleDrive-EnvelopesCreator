@@ -1,0 +1,39 @@
+/*
+Google Apps Script
+Author: Tiger Huang
+Date: 2013/06/19
+*/
+function LoadData() {
+  var doc = DocumentApp.getActiveDocument();
+  var body = doc.getBody();
+  var URL = "https://docs.google.com/spreadsheet/ccc?key=xxxx"; // 收件者名單列表
+  var sheet = SpreadsheetApp.openByUrl(URL);
+  var rows = sheet.getDataRange();
+  var numRows = rows.getNumRows();
+  var values = rows.getValues();
+  var from_addr = "428 台中市大雅區"; //寄件者地址
+  
+  // Define a custom style.
+  var style_address = {};
+  style_address[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.LEFT;
+  style_address[DocumentApp.Attribute.FONT_SIZE] = 12;
+  style_address[DocumentApp.Attribute.BOLD] = true;
+  var style_names = {};
+  style_names[DocumentApp.Attribute.HORIZONTAL_ALIGNMENT] = DocumentApp.HorizontalAlignment.LEFT;
+  style_names[DocumentApp.Attribute.FONT_SIZE] = 18;
+  style_names[DocumentApp.Attribute.BOLD] = true;
+
+  //略過標題列
+  for (var i = 1; i <= numRows - 1; i++) {
+    var row = values[i];
+    // Append a plain paragraph.
+    var address = doc.appendParagraph(from_addr + '\r\n\r\n\r\n\r\n');
+	//row[0] = 收件者地址, row[1] = 收件者姓名, row[2] = 收件者稱謂
+	//翻不到API 英文不好..懶人解法...
+    var name = doc.appendParagraph('　　　　　' + row[0] + '\r　　　　　' + row[1] + row[2] + '收');
+    // Apply the custom style.
+    address.setAttributes(style_address);
+    name.setAttributes(style_names);
+    body.appendPageBreak();
+  }
+};
